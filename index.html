@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Write Pro - 未来创作方式</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全局重置与基础 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: #000;
+            color: #f5f5f7;
+            overflow-x: hidden;
+            cursor: default;
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+        /* 核心3D透视容器 */
+        .perspective-global {
+            perspective: 2000px;
+            transform-style: preserve-3d;
+        }
+
+        /* 苹果风格渐变文字 */
+        .text-gradient {
+            background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 按钮样式 */
+        .btn-glow {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-glow:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+        }
+
+        /* 3D环境光效 */
+        .glow-ring {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            z-index: 1;
+        }
+        .glow-1 { width: 600px; height: 600px; background: #3b82f6; top: 10%; left: 10%; animation: pulse 4s infinite; }
+        .glow-2 { width: 500px; height: 500px; background: #a855f7; bottom: 10%; right: 10%; animation: pulse 4s infinite reverse; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* 3D卡片层叠效果 */
+        .card-stack {
+            position: relative;
+            height: 500px;
+            width: 100%;
+            perspective: 1500px;
+        }
+        .card-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backface-visibility: hidden;
+        }
+        .card-layer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.95;
+        }
+
+        /* 层级状态类 */
+        .state-front {
+            transform: rotateX(10deg) rotateY(-15deg) translateZ(0);
+            z-index: 3;
+            opacity: 1;
+        }
+        .state-mid {
+            transform: rotateX(10deg) rotateY(-15deg) translateZ(-60px) translateX(40px) translateY(20px);
+            z-index: 2;
+            opacity: 0.7;
+        }
+        .state-back {
+            transform: rotateX(10deg) rotateY(-15deg) translateZ(-120px) translateX(80px) translateY(40px);
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        /* 场景卡片悬停效果 */
+        .scene-card {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .scene-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 20px 50px -20px rgba(96, 165, 250, 0.3);
+        }
+        .scene-card:hover .scene-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+        }
+
+        /* 平滑滚动 */
+        html { scroll-behavior: smooth; }
+        
+        /* 导航栏毛玻璃 */
+        .nav-glass {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+    </style>
+</head>
+<body class="perspective-global">
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full nav-glass z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="text-2xl font-semibold tracking-tighter">
+                    AI <span class="text-gradient">Write</span>
+                </div>
+                <div class="hidden md:flex space-x-10 text-sm font-medium text-gray-300">
+                    <a href="#design" class="hover:text-white transition">设计</a>
+                    <a href="#scenarios" class="hover:text-white transition">场景</a>
+                    <a href="#features" class="hover:text-white transition">性能</a>
+                    <a href="#gallery" class="hover:text-white transition">展示</a>
+                    <a href="#buy" class="hover:text-white transition">购买</a>
+                </div>
+                <button class="btn-glow text-white px-6 py-2.5 rounded-full text-sm font-medium">
+                    立即预约
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- 背景光晕 -->
+        <div class="glow-ring glow-1"></div>
+        <div class="glow-ring glow-2"></div>
+
+        <div class="relative z-20 text-center px-6 max-w-5xl mx-auto">
+            <p class="text-lg md:text-xl text-blue-400 mb-4 tracking-widest uppercase">AI 手写屏 · 旗舰版</p>
+            <h1 class="text-7xl md:text-9xl font-bold mb-8 tracking-tighter">
+                灵感，<br>
+                <span class="text-gradient">跃然屏上</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
+                配备磁吸压感笔与类纸护眼屏，搭载生成式AI大模型。<br class="hidden md:block">
+                前所未有的创作体验。
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="#gallery" class="btn-glow text-white px-10 py-4 rounded-full text-lg font-semibold">
+                    观看场景展示
+                </a>
+                <a href="#scenarios" class="border border-gray-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition">
+                    探索使用场景
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 设计板块 -->
+    <section id="design" class="py-32 px-8 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div>
+                    <h2 class="text-5xl md:text-6xl font-bold mb-8 tracking-tight">
+                        薄如蝉翼，<br>坚如磐石
+                    </h2>
+                    <p class="text-xl text-gray-400 mb-8 leading-relaxed">
+                        4.5mm 一体化航空级铝合金机身。
+                        8.3英寸类纸护眼屏，在阳光下依然清晰可见。
+                    </p>
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 4096级压感，倾斜感应</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 磁吸无线充电笔</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 14天超长续航</li>
+                    </ul>
+                </div>
+                
+                <!-- 3D层叠图片组 -->
+                <div class="card-stack" id="designCardStack">
+                    <div class="card-layer" id="card-1">
+                        <img src="images/feature-1.jpg" alt="设计细节1" onerror="this.src='https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=1000&auto=format&fit=crop'">
+                    </div>
+                    <div class="card-layer" id="card-2">
+                        <img src="images/feature-2.jpg" alt="设计细节2" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000&auto=format&fit=crop'">
+                    </div>
+                    <div class="card-layer" id="card-3">
+                        <img src="images/feature-3.jpg" alt="设计细节3" onerror="this.src='https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1000&auto=format&fit=crop'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 【新增】产品预计使用场景页面 -->
+    <section id="scenarios" class="py-32 px-8 bg-gradient-to-b from-black to-[#050509]">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20">
+                <p class="text-lg text-blue-400 mb-4 tracking-widest uppercase">多场景适配</p>
+                <h2 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+                    为每一种灵感<br><span class="text-gradient">量身打造</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+                    无论是课堂学习、商务会议还是艺术创作，AI Write Pro 都能完美融入你的工作流。
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 场景1：笔记错题 -->
+                <div class="scene-card glass p-10 rounded-3xl">
+                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
+                        📚
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">课堂学习</h3>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        书写错题后一键归纳入错题笔记，AI学习助手助你高效复习。
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 学习思维导图AI全自动生成</li>
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 错题本自动整理</li>
+                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 艾宾浩斯记忆曲线</li>
+                    </ul>
+                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
+                        <img src="images/scene-1.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop'">
+                    </div>
+                </div>
+
+                <!-- 场景2：商务办公 -->
+                <div class="scene-card glass p-10 rounded-3xl">
+                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
+                        💼
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">商务会议</h3>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        手记项目内容一键生成思维导图，创新idea随意拓展。
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span> 思维导图自动生成</li>
+                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span> SWOT/甘特图模板</li>
+                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span>智能AI协助办公</li>
+                    </ul>
+                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
+                        <img src="images/scene-2.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop'">
+                    </div>
+                </div>
+
+                <!-- 场景3：创意设计 -->
+                <div class="scene-card glass p-10 rounded-3xl">
+                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-600 to-rose-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
+                        🎨
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">艺术创作</h3>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        4096级压感还原真实笔触，从线稿到上色一气呵成。灵感关键词AI自动拓展背景资料。
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 专业级压感笔触</li>
+                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 分图层绘画</li>
+                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 灵感素材库</li>
+                    </ul>
+                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
+                        <img src="images/scene-3.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心性能 -->
+    <section id="features" class="py-32 px-8">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-5xl md:text-6xl font-bold mb-20 text-center tracking-tight">
+                核心 <span class="text-gradient">性能</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 功能块 1 -->
+                <div class="group p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-500">
+                    <div class="text-5xl mb-6">🧠</div>
+                    <h3 class="text-2xl font-semibold mb-4">AI 大脑</h3>
+                    <p class="text-gray-400">手写内容实时OCR转文本，一键生成思维导图。选中关键词，AI自动为你拓展背景资料。</p>
+                    <div class="mt-6 overflow-hidden rounded-2xl h-48 border border-white/10">
+                        <img src="images/feature-4.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop'">
+                    </div>
+                </div>
+
+                <!-- 功能块 2 -->
+                <div class="group p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-500">
+                    <div class="text-5xl mb-6">🌐</div>
+                    <h3 class="text-2xl font-semibold mb-4">全平台协同</h3>
+                    <p class="text-gray-400">内容自动同步至手机、平板和PC。端到端加密云存储。</p>
+                    <div class="mt-6 overflow-hidden rounded-2xl h-48 border border-white/10">
+                        <img src="images/feature-5.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 全屏画廊 -->
+    <section id="gallery" class="py-20">
+        <div class="max-w-[1920px] mx-auto px-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <!-- 画廊图片 -->
+                <div class="h-[600px] overflow-hidden group relative">
+                    <img src="images/gallery-1.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop'">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+                </div>
+                <div class="h-[600px] overflow-hidden group relative">
+                    <img src="images/gallery-2.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1600&auto=format&fit=crop'">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+                </div>
+                <div class="h-[600px] overflow-hidden group relative md:col-span-2">
+                    <img src="images/gallery-3.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2400&auto=format&fit=crop'">
+                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 购买 -->
+    <section id="buy" class="py-32 px-8 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+                现在开始
+            </h2>
+            <p class="text-2xl text-gray-400 mb-12">
+                AI Write Pro<br>
+                首发价 <span class="text-white font-bold text-4xl">¥1,299</span> 起
+            </p>
+            <button class="btn-glow text-white px-12 py-5 rounded-full text-xl font-semibold">
+                立即预约购买
+            </button>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="border-t border-white/10 py-12 px-8">
+        <div class="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+            <div class="mb-6">
+                <span class="text-xl font-semibold text-white">AI <span class="text-gradient">Write</span></span>
+            </div>
+            <p>© 2026 AI Write. All rights reserved.</p>
+            <p class="mt-2">Designed for the future.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 3D叠层自动轮播逻辑 (1.5秒间隔)
+        document.addEventListener('DOMContentLoaded', function() {
+            const card1 = document.getElementById('card-1');
+            const card2 = document.getElementById('card-2');
+            const card3 = document.getElementById('card-3');
+            const cards = [card1, card2, card3];
+            
+            const states = [
+                ['state-front', 'state-mid', 'state-back'],
+                ['state-back', 'state-front', 'state-mid'],
+                ['state-mid', 'state-back', 'state-front']
+            ];
+            
+            let currentStateIndex = 0;
+            const intervalTime = 1500;
+
+            function updateCards() {
+                cards.forEach(card => {
+                    card.classList.remove('state-front', 'state-mid', 'state-back');
+                });
+                
+                const currentState = states[currentStateIndex];
+                cards.forEach((card, index) => {
+                    card.classList.add(currentState[index]);
+                });
+                
+                currentStateIndex = (currentStateIndex + 1) % states.length;
+            }
+
+            updateCards();
+            setInterval(updateCards, intervalTime);
+        });
+
+        // 鼠标跟随视差效果
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+            const glow1 = document.querySelector('.glow-1');
+            const glow2 = document.querySelector('.glow-2');
+            if (glow1) glow1.style.transform = `translate(${mouseX * 30}px, ${mouseY * 30}px)`;
+            if (glow2) glow2.style.transform = `translate(${-mouseX * 30}px, ${-mouseY * 30}px)`;
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.borderBottom = '1px solid rgba(255,255,255,0.15)';
+            } else {
+                nav.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
