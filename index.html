@@ -3,71 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Write Pro - 未来创作方式</title>
+    <title>AI Pen Pro - 一笔一世界</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* 全局重置与基础 */
+        /* 全局重置与基础 - 禅意配色 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            background: #000;
-            color: #f5f5f7;
+            font-family: 'Inter', 'Noto Serif SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f7f5f0; /* 米白色底 */
+            color: #2c2c2c; /* 墨灰色文字 */
             overflow-x: hidden;
-            cursor: default;
         }
         
-        /* 滚动条美化 */
+        /* 滚动条美化 - 禅意 */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #f0ede6; }
+        ::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 3px; }
 
-        /* 核心3D透视容器 */
-        .perspective-global {
-            perspective: 2000px;
-            transform-style: preserve-3d;
-        }
-
-        /* 苹果风格渐变文字 */
+        /* 禅意渐变文字 */
         .text-gradient {
-            background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+            background: linear-gradient(90deg, #5c7c6e, #6b8e7f, #4a6358); /* 青竹色渐变 */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        /* 按钮样式 */
+        /* 禅意按钮样式 */
         .btn-glow {
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #5c7c6e 0%, #4a6358 100%);
+            color: #f7f5f0;
+            box-shadow: 0 10px 30px -10px rgba(92, 124, 110, 0.4);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .btn-glow:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+            box-shadow: 0 15px 40px -10px rgba(92, 124, 110, 0.6);
         }
 
-        /* 3D环境光效 */
-        .glow-ring {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            z-index: 1;
-        }
-        .glow-1 { width: 600px; height: 600px; background: #3b82f6; top: 10%; left: 10%; animation: pulse 4s infinite; }
-        .glow-2 { width: 500px; height: 500px; background: #a855f7; bottom: 10%; right: 10%; animation: pulse 4s infinite reverse; }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
+        /* 全屏板块样式 */
+        .full-screen-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
         }
 
-        /* 3D卡片层叠效果 */
+        /* 图片容器 - 禅意 */
+        .scene-image-box {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #e8e4dc;
+            border: 1px solid #d4cfc5;
+            box-shadow: 0 20px 60px -30px rgba(0,0,0,0.15);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .scene-image-box:hover {
+            transform: translateY(-5px) rotateX(2deg);
+        }
+        .scene-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 3D卡片层叠效果 - 禅意 */
         .card-stack {
             position: relative;
             height: 500px;
@@ -78,12 +84,13 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 24px;
+            background: #e8e4dc;
+            border: 1px solid #d4cfc5;
+            border-radius: 20px;
             overflow: hidden;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             backface-visibility: hidden;
+            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.15);
         }
         .card-layer img {
             width: 100%;
@@ -91,8 +98,6 @@
             object-fit: cover;
             opacity: 0.95;
         }
-
-        /* 层级状态类 */
         .state-front {
             transform: rotateX(10deg) rotateY(-15deg) translateZ(0);
             z-index: 3;
@@ -109,98 +114,282 @@
             opacity: 0.4;
         }
 
-        /* 场景卡片悬停效果 */
-        .scene-card {
+        /* 3D旋转场景统筹界面 - 禅意 */
+        .rotator-container {
+            perspective: 2000px;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .rotator {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            transform-style: preserve-3d;
+            animation: rotate3d 20s infinite linear;
+        }
+        @keyframes rotate3d {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .rotator-card {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            backface-visibility: visible;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(92, 124, 110, 0.2);
+            border-radius: 20px;
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 20px 60px -30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .rotator-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(92, 124, 110, 0.5);
+            box-shadow: 0 20px 50px -20px rgba(92, 124, 110, 0.3);
+        }
+        .rotator-card .icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+        .rotator-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            font-family: 'Noto Serif SC', serif;
+            margin-bottom: 12px;
+            color: #2c2c2c;
+        }
+        .rotator-card p {
+            color: #6b6b6b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .face-front { transform: translateZ(250px); }
+        .face-back { transform: rotateY(180deg) translateZ(250px); }
+        .face-right { transform: rotateY(90deg) translateZ(250px); }
+        .face-left { transform: rotateY(-90deg) translateZ(250px); }
+
+        /* 增强立体卡片样式 - 禅意 */
+        .enhanced-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(92, 124, 110, 0.15);
+            border-radius: 20px;
+            padding: 32px;
+            transform-style: preserve-3d;
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
         }
-        .scene-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(96, 165, 250, 0.5);
-            box-shadow: 0 20px 50px -20px rgba(96, 165, 250, 0.3);
+        .enhanced-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(92, 124, 110, 0.4), transparent);
         }
-        .scene-card:hover .scene-icon {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(96, 165, 250, 0.5);
+        .enhanced-card:hover {
+            transform: translateY(-8px) rotateX(3deg);
+            box-shadow: 0 20px 50px -20px rgba(92, 124, 110, 0.2);
+            border-color: rgba(92, 124, 110, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 【修改】醒目场景按钮样式 */
+        .scene-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #5c7c6e 0%, #4a6358 100%);
+            color: #f7f5f0;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px -10px rgba(92, 124, 110, 0.5);
+            margin-top: 8px;
+        }
+        .scene-action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px -10px rgba(92, 124, 110, 0.7);
+        }
+
+        /* 【修复】全屏弹窗样式 - 从下往上滑入 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 44, 44, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #f7f5f0;
+            width: 100%;
+            height: 90vh;
+            border-radius: 30px 30px 0 0;
+            position: relative;
+            box-shadow: 0 -30px 80px -30px rgba(0,0,0,0.4);
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        /* 弹窗内部内容样式 */
+        .modal-inner {
+            padding: 40px;
+            padding-top: 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            font-size: 24px;
+            color: #6b6b6b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .modal-close-btn:hover {
+            background: rgba(0,0,0,0.1);
+            color: #2c2c2c;
+        }
+
+        /* 导航栏 - 禅意 */
+        .nav-glass {
+            background: rgba(247, 245, 240, 0.9);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid rgba(92, 124, 110, 0.1);
+        }
+
+        /* 禅意背景装饰 */
+        .zen-bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        /* 辅助文字颜色 */
+        .text-secondary {
+            color: #6b6b6b;
         }
 
         /* 平滑滚动 */
         html { scroll-behavior: smooth; }
-        
-        /* 导航栏毛玻璃 */
-        .nav-glass {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-        }
     </style>
 </head>
-<body class="perspective-global">
+<body>
 
     <!-- 导航栏 -->
-    <nav class="fixed top-0 w-full nav-glass z-50 border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-8">
+    <nav class="fixed top-0 w-full nav-glass z-50">
+        <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-between items-center h-20">
-                <div class="text-2xl font-semibold tracking-tighter">
-                    AI <span class="text-gradient">Write</span>
+                <div class="text-2xl font-semibold tracking-tighter font-['Noto_Serif_SC']">
+                    AI <span class="text-gradient">Pen</span>
                 </div>
-                <div class="hidden md:flex space-x-10 text-sm font-medium text-gray-300">
-                    <a href="#design" class="hover:text-white transition">设计</a>
-                    <a href="#scenarios" class="hover:text-white transition">场景</a>
-                    <a href="#features" class="hover:text-white transition">性能</a>
-                    <a href="#gallery" class="hover:text-white transition">展示</a>
-                    <a href="#buy" class="hover:text-white transition">购买</a>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-secondary">
+                    <a href="#hero" class="hover:text-[#2c2c2c] transition">首页</a>
+                    <a href="#design" class="hover:text-[#2c2c2c] transition">设计</a>
+                    <a href="#features" class="hover:text-[#2c2c2c] transition">性能</a>
+                    <a href="#overview" class="hover:text-[#2c2c2c] transition">场景总览</a>
+                    <a href="#compatibility" class="hover:text-[#2c2c2c] transition">终端适配</a>
+                    <a href="#specs" class="hover:text-[#2c2c2c] transition">规格</a>
                 </div>
-                <button class="btn-glow text-white px-6 py-2.5 rounded-full text-sm font-medium">
+                <button class="btn-glow px-6 py-2.5 rounded-full text-sm font-medium">
                     立即预约
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero区域 -->
-    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <!-- 背景光晕 -->
-        <div class="glow-ring glow-1"></div>
-        <div class="glow-ring glow-2"></div>
+    <!-- 1. Hero首页 -->
+    <section id="hero" class="full-screen-section relative overflow-hidden">
+        <!-- 禅意背景光晕 -->
+        <div class="zen-bg-circle w-[600px] h-[600px] bg-[#c5d1cb] top-1/4 left-1/4"></div>
+        <div class="zen-bg-circle w-[500px] h-[500px] bg-[#d4cfc5] bottom-1/4 right-1/4"></div>
 
-        <div class="relative z-20 text-center px-6 max-w-5xl mx-auto">
-            <p class="text-lg md:text-xl text-blue-400 mb-4 tracking-widest uppercase">AI 手写屏 · 旗舰版</p>
-            <h1 class="text-7xl md:text-9xl font-bold mb-8 tracking-tighter">
-                灵感，<br>
-                <span class="text-gradient">跃然屏上</span>
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-                配备磁吸压感笔与类纸护眼屏，搭载生成式AI大模型。<br class="hidden md:block">
-                前所未有的创作体验。
-            </p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="#gallery" class="btn-glow text-white px-10 py-4 rounded-full text-lg font-semibold">
-                    观看场景展示
-                </a>
-                <a href="#scenarios" class="border border-gray-600 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition">
-                    探索使用场景
-                </a>
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+            <div>
+                <p class="text-lg text-[#5c7c6e] mb-4 tracking-widest uppercase">AI 智能笔 · 旗舰版</p>
+                <h1 class="text-6xl md:text-8xl font-bold mb-8 tracking-tighter font-['Noto_Serif_SC']">
+                    一笔，<br>
+                    <span class="text-gradient">一世界</span>
+                </h1>
+                <p class="text-xl text-secondary mb-10 font-light leading-relaxed">
+                    一支笔，适配市面任何平板。搭载生成式AI大模型，<br>
+                    从灵感捕捉到方案落地，一笔呵成。
+                </p>
+                <div class="flex gap-4">
+                    <a href="#overview" class="btn-glow px-8 py-4 rounded-full text-lg font-medium">
+                        探索场景
+                    </a>
+                </div>
+            </div>
+            <!-- 产品主图 -->
+            <div class="scene-image-box h-[500px]">
+                <img src="images/hero-product.png" alt="AI Pen Pro 产品图" onerror="this.src='https://images.unsplash.com/photo-1580894894513-541e068a3e2b?q=80&w=1600&auto=format&fit=crop'">
             </div>
         </div>
     </section>
 
-    <!-- 设计板块 -->
-    <section id="design" class="py-32 px-8 relative">
-        <div class="max-w-7xl mx-auto">
+    <!-- 2. 产品设计与卖点 -->
+    <section id="design" class="full-screen-section bg-[#f0ede6]">
+        <div class="max-w-7xl mx-auto px-6 w-full">
             <div class="grid lg:grid-cols-2 gap-20 items-center">
                 <div>
-                    <h2 class="text-5xl md:text-6xl font-bold mb-8 tracking-tight">
-                        薄如蝉翼，<br>坚如磐石
+                    <h2 class="text-5xl md:text-6xl font-bold mb-8 tracking-tight font-['Noto_Serif_SC']">
+                        精致工艺，<br>极致体验
                     </h2>
-                    <p class="text-xl text-gray-400 mb-8 leading-relaxed">
-                        4.5mm 一体化航空级铝合金机身。
-                        8.3英寸类纸护眼屏，在阳光下依然清晰可见。
+                    <p class="text-xl text-secondary mb-8 leading-relaxed">
+                        一体化航空级铝合金笔身，4096级压感，倾斜感应，还原真实纸笔触感。
                     </p>
-                    <ul class="space-y-4 text-gray-300">
-                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 4096级压感，倾斜感应</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 磁吸无线充电笔</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-3 text-xl">•</span> 14天超长续航</li>
+                    <ul class="space-y-4 text-[#4a4a4a] text-lg">
+                        <li class="flex items-center"><span class="text-[#5c7c6e] mr-3 text-xl">•</span> 4096级压感，倾斜感应</li>
+                        <li class="flex items-center"><span class="text-[#5c7c6e] mr-3 text-xl">•</span> 磁吸无线充电，随放随充</li>
+                        <li class="flex items-center"><span class="text-[#5c7c6e] mr-3 text-xl">•</span> 14天超长续航</li>
+                        <li class="flex items-center"><span class="text-[#5c7c6e] mr-3 text-xl">•</span> 智能点阵识别技术</li>
                     </ul>
                 </div>
                 
@@ -220,104 +409,28 @@
         </div>
     </section>
 
-    <!-- 【新增】产品预计使用场景页面 -->
-    <section id="scenarios" class="py-32 px-8 bg-gradient-to-b from-black to-[#050509]">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-20">
-                <p class="text-lg text-blue-400 mb-4 tracking-widest uppercase">多场景适配</p>
-                <h2 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
-                    为每一种灵感<br><span class="text-gradient">量身打造</span>
-                </h2>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">
-                    无论是课堂学习、商务会议还是艺术创作，AI Write Pro 都能完美融入你的工作流。
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- 场景1：笔记错题 -->
-                <div class="scene-card glass p-10 rounded-3xl">
-                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
-                        📚
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-4">课堂学习</h3>
-                    <p class="text-gray-400 mb-6 leading-relaxed">
-                        书写错题后一键归纳入错题笔记，AI学习助手助你高效复习。
-                    </p>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 学习思维导图AI全自动生成</li>
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 错题本自动整理</li>
-                        <li class="flex items-center"><span class="text-blue-400 mr-2">▸</span> 艾宾浩斯记忆曲线</li>
-                    </ul>
-                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
-                        <img src="images/scene-1.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop'">
-                    </div>
-                </div>
-
-                <!-- 场景2：商务办公 -->
-                <div class="scene-card glass p-10 rounded-3xl">
-                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
-                        💼
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-4">商务会议</h3>
-                    <p class="text-gray-400 mb-6 leading-relaxed">
-                        手记项目内容一键生成思维导图，创新idea随意拓展。
-                    </p>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span> 思维导图自动生成</li>
-                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span> SWOT/甘特图模板</li>
-                        <li class="flex items-center"><span class="text-purple-400 mr-2">▸</span>智能AI协助办公</li>
-                    </ul>
-                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
-                        <img src="images/scene-2.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop'">
-                    </div>
-                </div>
-
-                <!-- 场景3：创意设计 -->
-                <div class="scene-card glass p-10 rounded-3xl">
-                    <div class="scene-icon w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-600 to-rose-500 flex items-center justify-center mb-8 text-4xl transition-all duration-500">
-                        🎨
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-4">艺术创作</h3>
-                    <p class="text-gray-400 mb-6 leading-relaxed">
-                        4096级压感还原真实笔触，从线稿到上色一气呵成。灵感关键词AI自动拓展背景资料。
-                    </p>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 专业级压感笔触</li>
-                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 分图层绘画</li>
-                        <li class="flex items-center"><span class="text-pink-400 mr-2">▸</span> 灵感素材库</li>
-                    </ul>
-                    <div class="mt-8 h-40 rounded-2xl overflow-hidden border border-white/10">
-                        <img src="images/scene-3.jpg" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop'">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 核心性能 -->
-    <section id="features" class="py-32 px-8">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-5xl md:text-6xl font-bold mb-20 text-center tracking-tight">
+    <!-- 3. 核心性能 -->
+    <section id="features" class="full-screen-section">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <h2 class="text-5xl md:text-6xl font-bold mb-20 text-center tracking-tight font-['Noto_Serif_SC']">
                 核心 <span class="text-gradient">性能</span>
             </h2>
             
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- 功能块 1 -->
-                <div class="group p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-500">
-                    <div class="text-5xl mb-6">🧠</div>
-                    <h3 class="text-2xl font-semibold mb-4">AI 大脑</h3>
-                    <p class="text-gray-400">手写内容实时OCR转文本，一键生成思维导图。选中关键词，AI自动为你拓展背景资料。</p>
-                    <div class="mt-6 overflow-hidden rounded-2xl h-48 border border-white/10">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="enhanced-card group">
+                    <div class="text-6xl mb-6">🧠</div>
+                    <h3 class="text-2xl font-semibold mb-4 font-['Noto_Serif_SC']">AI 大脑</h3>
+                    <p class="text-secondary text-lg leading-relaxed">笔迹实时数字化，OCR转文本，一键生成思维导图。选中关键词，AI自动为你拓展背景资料、SWOT分析、创新点联想。</p>
+                    <div class="mt-8 overflow-hidden rounded-2xl h-48 border border-[#d4cfc5]">
                         <img src="images/feature-4.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop'">
                     </div>
                 </div>
 
-                <!-- 功能块 2 -->
-                <div class="group p-10 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition duration-500">
-                    <div class="text-5xl mb-6">🌐</div>
-                    <h3 class="text-2xl font-semibold mb-4">全平台协同</h3>
-                    <p class="text-gray-400">内容自动同步至手机、平板和PC。端到端加密云存储。</p>
-                    <div class="mt-6 overflow-hidden rounded-2xl h-48 border border-white/10">
+                <div class="enhanced-card group">
+                    <div class="text-6xl mb-6">🌐</div>
+                    <h3 class="text-2xl font-semibold mb-4 font-['Noto_Serif_SC']">全平台协同</h3>
+                    <p class="text-secondary text-lg leading-relaxed">内容自动同步至手机、平板和PC。端到端加密云存储。</p>
+                    <div class="mt-8 overflow-hidden rounded-2xl h-48 border border-[#d4cfc5]">
                         <img src="images/feature-5.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop'">
                     </div>
                 </div>
@@ -325,55 +438,428 @@
         </div>
     </section>
 
-    <!-- 全屏画廊 -->
-    <section id="gallery" class="py-20">
-        <div class="max-w-[1920px] mx-auto px-0">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
-                <!-- 画廊图片 -->
-                <div class="h-[600px] overflow-hidden group relative">
-                    <img src="images/gallery-1.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop'">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
-                </div>
-                <div class="h-[600px] overflow-hidden group relative">
-                    <img src="images/gallery-2.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1600&auto=format&fit=crop'">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
-                </div>
-                <div class="h-[600px] overflow-hidden group relative md:col-span-2">
-                    <img src="images/gallery-3.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2400&auto=format&fit=crop'">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"></div>
+    <!-- 4. 3D旋转场景统筹界面 -->
+    <section id="overview" class="full-screen-section bg-[#f0ede6]">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-12">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">全场景覆盖</h2>
+                <p class="text-xl text-secondary">旋转探索，发现无限可能</p>
+            </div>
+            
+            <div class="rotator-container">
+                <div class="rotator">
+                    <!-- 面1：职场办公 -->
+                    <div class="rotator-card face-front">
+                        <div class="icon">💼</div>
+                        <h3>职场办公</h3>
+                        <p>会议纪要、任务拆解、<br>方案汇报，一笔搞定</p>
+                        <a href="#work" class="mt-6 text-[#5c7c6e] text-sm font-medium hover:text-[#4a6358]">查看详情 →</a>
+                    </div>
+                    <!-- 面2：学习成长 -->
+                    <div class="rotator-card face-right">
+                        <div class="icon">📚</div>
+                        <h3>学习成长</h3>
+                        <p>错题笔记、知识内化、<br>论文辅助，高效学习</p>
+                        <a href="#study" class="mt-6 text-[#5c7c6e] text-sm font-medium hover:text-[#4a6358]">查看详情 →</a>
+                    </div>
+                    <!-- 面3：创意创作 -->
+                    <div class="rotator-card face-back">
+                        <div class="icon">🎨</div>
+                        <h3>创意创作</h3>
+                        <p>艺术灵感、文案剧本、<br>音乐创作，灵感不流失</p>
+                        <a href="#create" class="mt-6 text-[#5c7c6e] text-sm font-medium hover:text-[#4a6358]">查看详情 →</a>
+                    </div>
+                    <!-- 面4：生活日常 -->
+                    <div class="rotator-card face-left">
+                        <div class="icon">🏠</div>
+                        <h3>生活日常</h3>
+                        <p>旅行规划、情绪管理、<br>兴趣沉淀，热爱生活</p>
+                        <a href="#life" class="mt-6 text-[#5c7c6e] text-sm font-medium hover:text-[#4a6358]">查看详情 →</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 购买 -->
-    <section id="buy" class="py-32 px-8 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+    <!-- 5. 职场办公场景 -->
+    <section id="work" class="full-screen-section">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">💼 职场办公</h2>
+                <p class="text-xl text-secondary">会议纪要、任务拆解、灵感迸发，一笔搞定</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scene-image-box h-[500px] order-2 lg:order-1">
+                    <img src="images/scene-work.jpg" alt="职场办公场景" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1600&auto=format&fit=crop'">
+                </div>
+                <div class="order-1 lg:order-2 space-y-6">
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">会议全流程提效</h3>
+                        <p class="text-secondary mb-4">会中实时记录，零散观点自动结构化；会后自动整理，AI自动生成纪要。</p>
+                        <button onclick="openModal('modal-work-1')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">灵感风暴与创新搭建</h3>
+                        <p class="text-secondary mb-4">头脑风暴时，即时录入核心需求，AI自动拆解WBS思维导图并拓展需求单词，打开创意新世界。</p>
+                        <button onclick="openModal('modal-work-2')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 学习成长场景 -->
+    <section id="study" class="full-screen-section bg-[#f0ede6]">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">📚 学习成长</h2>
+                <p class="text-xl text-secondary">错题笔记、知识内化、AI辅助，亲子协同</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">错题笔记与知识体系</h3>
+                        <p class="text-secondary mb-4">拍照/文字录入错题、错误原因、核心考点，AI自动生成错题思维导图。</p>
+                        <button onclick="openModal('modal-study-1')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">亲子协同与AI指导</h3>
+                        <p class="text-secondary mb-4">家长可随时查看孩子学习笔记，并根据AI数据统计，针对性寻找孩子知识点盲区，精准查漏补缺。</p>
+                        <button onclick="openModal('modal-study-2')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                </div>
+                <div class="scene-image-box h-[500px]">
+                    <img src="images/scene-study.jpg" alt="学习成长场景" onerror="this.src='https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1600&auto=format&fit=crop'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. 创意创作场景 -->
+    <section id="create" class="full-screen-section">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">🎨 创意创作</h2>
+                <p class="text-xl text-secondary">艺术灵感、文案剧本、音乐创作，灵感不流失</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scene-image-box h-[500px] order-2 lg:order-1">
+                    <img src="images/scene-create.jpg" alt="创意创作场景" onerror="this.src='https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1600&auto=format&fit=crop'">
+                </div>
+                <div class="order-1 lg:order-2 space-y-6">
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">艺术创作灵感落地</h3>
+                        <p class="text-secondary mb-4">文字/语音/手绘线条录入灵感，AI先生成创作思路导图，再转化为AI绘画提示词。</p>
+                        <button onclick="openModal('modal-create-1')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">文案/短视频/剧本创作</h3>
+                        <p class="text-secondary mb-4">录入选题、灵感片段、人物设定，AI自动生成结构化导图。</p>
+                        <button onclick="openModal('modal-create-2')" class="scene-action-btn">
+                            ✨ 体验模拟场景
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. 生活日常场景 -->
+    <section id="life" class="full-screen-section bg-[#f0ede6]">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">🏠 生活日常</h2>
+                <p class="text-xl text-secondary">旅行规划、情绪管理、兴趣沉淀，热爱生活</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">✈️ 旅行规划与家庭事务</h3>
+                        <p class="text-secondary mb-4">录入目的地、时间、预算、偏好，AI自动生成规划导图；装修、婚礼等重大事务，AI自动生成全流程环节、待办清单。</p>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">🧘 情绪管理与内耗疏导</h3>
+                        <p class="text-secondary mb-4">录入情绪、触发事件、内心想法，AI自动生成情绪梳理导图，拆分情绪来源、核心诉求、认知偏差、解决方案。</p>
+                    </div>
+                </div>
+                <div class="scene-image-box h-[500px]">
+                    <img src="images/scene-life.jpg" alt="生活日常场景" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新增：全终端适配页面（倒数第三页） -->
+    <section id="compatibility" class="full-screen-section">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4 font-['Noto_Serif_SC']">📱 全终端无缝适配</h2>
+                <p class="text-xl text-secondary">一支笔，玩转市面所有平板，专属APP一键协同</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="scene-image-box h-[500px] order-2 lg:order-1">
+                    <img src="images/tablet-compatibility.jpg" alt="全平板终端适配" onerror="this.src='https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1600&auto=format&fit=crop'">
+                </div>
+                <div class="order-1 lg:order-2 space-y-6">
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">全品牌平板均适配</h3>
+                        <p class="text-secondary mb-4">全面兼容iPad全系列、华为MatePad、小米平板、三星Galaxy Tab、联想小新Pad、OPPO Pad、vivo Pad等市面99%以上平板设备。</p>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">多系统原生兼容</h3>
+                        <p class="text-secondary mb-4">深度适配iPadOS、鸿蒙OS、Android全版本系统，无需root、无需越狱，无需破解系统权限，下载对应APP即可即装即用。</p>
+                    </div>
+                    <div class="enhanced-card">
+                        <h3 class="text-xl font-semibold mb-3 text-[#5c7c6e] font-['Noto_Serif_SC']">专属APP一键协同</h3>
+                        <p class="text-secondary mb-4">iOS/Android/鸿蒙多端专属APP，蓝牙5.2极速配对，即连即用。笔迹实时同步、AI功能一键调用、内容跨设备云端流转，平板、手机、PC三端数据无缝互通。</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. 产品参数规格 -->
+    <section id="specs" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-5xl font-bold mb-16 text-center tracking-tight font-['Noto_Serif_SC']">
+                技术 <span class="text-gradient">规格</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="enhanced-card">
+                    <h3 class="text-xl font-semibold mb-6 text-[#5c7c6e] font-['Noto_Serif_SC']">笔身参数</h3>
+                    <ul class="space-y-4 text-[#4a4a4a]">
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>压感级别</span><span class="text-[#2c2c2c]">4096级</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>连接方式</span><span class="text-[#2c2c2c]">蓝牙 5.2</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>充电方式</span><span class="text-[#2c2c2c]">磁吸无线充电</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>续航时间</span><span class="text-[#2c2c2c]">14天 (日常使用)</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>连续书写</span><span class="text-[#2c2c2c]">100小时</span></li>
+                        <li class="flex justify-between"><span>重量</span><span class="text-[#2c2c2c]">12g</span></li>
+                    </ul>
+                </div>
+                
+                <div class="enhanced-card">
+                    <h3 class="text-xl font-semibold mb-6 text-[#5c7c6e] font-['Noto_Serif_SC']">功能特性</h3>
+                    <ul class="space-y-4 text-[#4a4a4a]">
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>AI功能</span><span class="text-[#2c2c2c]">思维导图/灵感拓展/OCR</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>云存储</span><span class="text-[#2c2c2c]">端到端加密</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>生态对接</span><span class="text-[#2c2c2c]">飞书/钉钉</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>识别技术</span><span class="text-[#2c2c2c]">智能点阵/普通纸适配</span></li>
+                        <li class="flex justify-between border-b border-[#d4cfc5] pb-3"><span>倾斜感应</span><span class="text-[#2c2c2c]">支持</span></li>
+                        <li class="flex justify-between"><span>自定义按键</span><span class="text-[#2c2c2c]">支持</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. 购买页面 -->
+    <section id="buy" class="py-32 text-center bg-[#f0ede6]">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-5xl md:text-7xl font-bold mb-8 tracking-tight font-['Noto_Serif_SC']">
                 现在开始
             </h2>
-            <p class="text-2xl text-gray-400 mb-12">
-                AI Write Pro<br>
-                首发价 <span class="text-white font-bold text-4xl">¥1,299</span> 起
+            <p class="text-2xl text-secondary mb-12">
+                AI Pen Pro<br>
+                首发价 <span class="text-[#2c2c2c] font-bold text-4xl">¥599</span> 起
             </p>
-            <button class="btn-glow text-white px-12 py-5 rounded-full text-xl font-semibold">
+            <button class="btn-glow px-12 py-5 rounded-full text-xl font-medium">
                 立即预约购买
             </button>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer class="border-t border-white/10 py-12 px-8">
-        <div class="max-w-7xl mx-auto text-center text-gray-500 text-sm">
+    <footer class="border-t border-[#d4cfc5] py-12 px-6 bg-[#f7f5f0]">
+        <div class="max-w-7xl mx-auto text-center text-secondary text-sm">
             <div class="mb-6">
-                <span class="text-xl font-semibold text-white">AI <span class="text-gradient">Write</span></span>
+                <span class="text-xl font-semibold text-[#2c2c2c] font-['Noto_Serif_SC']">AI <span class="text-gradient">Pen</span></span>
             </div>
-            <p>© 2026 AI Write. All rights reserved.</p>
+            <p>© 2026 AI Pen. All rights reserved.</p>
             <p class="mt-2">Designed for the future.</p>
         </div>
     </footer>
 
+    <!-- ========================================== -->
+    <!-- 弹窗内容区域 -->
+    <!-- ========================================== -->
+
+    <!-- 弹窗1：职场-会议 -->
+    <div id="modal-work-1" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-work-1')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">💼 模拟场景：会议上的灵感迸发</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>跨部门头脑风暴会议上，大家正在讨论新产品的设计方案。</p>
+                    <p><strong>触发：</strong>你突然灵感迸发，想到了一个关于“社交+空间定位”的创新玩法，但此时大家的话题已经跳转到了个人空间门户的讨论。</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>你来不及打断，快速在笔记本上写下关键词：<strong>「社交、AR、大空间、6dof」</strong>。</li>
+                            <li>AI立马反馈到APP端，你选中关键词。</li>
+                            <li>AI立刻将这几个关键词拓展成了一张完整的<strong>「“社交大空间AR玩法”思维导图」</strong>，包含了设计理念、产品原理、市场分析、用户使用场景体验等分支。</li>
+                            <li>甚至还自动生成了一段可以在会上直接发言的<strong>话术概要</strong>。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>在会议的尾声，你完美地呈现了这个方案，获得了团队的认可，避免了灵感的流失。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗2：职场-临时任务 -->
+    <div id="modal-work-2" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-work-2')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">💼 模拟场景：领导的临时任务</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>周五下午，领导突然把你叫到办公室，说下周一要给客户做一个项目汇报。</p>
+                    <p><strong>触发：</strong>你手头毫无准备，只有领导口述的几个零散需求点。</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>你一边听，一边用 AI Pen 快速记录下：<strong>「客户痛点、我们的优势、预算范围、时间节点」</strong>。</li>
+                            <li>回到工位，你在手机APP里一键点击「<strong>生成汇报框架</strong>」。</li>
+                            <li>AI自动将这些零散的笔记生成了一份完整的<strong>PPT大纲思维导图</strong>，甚至帮你补充了“竞品分析”和“风险预案”两个你没考虑到的章节。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>你利用周末的一点时间就完成了一份逻辑严密的汇报，而不用熬夜从零开始。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗3：学习-错题 -->
+    <div id="modal-study-1" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-study-1')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">📚 模拟场景：考研数学错题整理</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>你在做考研数学真题，这道题你已经是第三次做错了。</p>
+                    <p><strong>触发：</strong>你知道这是你的薄弱点，但抄错题太浪费时间了。</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>你用 AI Pen 在错题旁写下：<strong>「泰勒公式应用、等价无穷小混淆」</strong>。</li>
+                            <li>AI不仅将这道题自动归档到了你的<strong>「高数错题本」</strong>，还生成了这道题的完整解题步骤。</li>
+                            <li>最棒的是，它自动关联了三道<strong>「同类题型推荐」</strong>，帮你彻底攻克这个知识点。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>你的错题本不再是简单的抄录，而是一个智能化的知识库。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗4：学习-亲子协同 -->
+    <div id="modal-study-2" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-study-2')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">📚 模拟场景：居家学习的「不打扰式陪伴」</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>孩子在书房独立写作业，父母在客厅处理工作 / 家务。</p>
+                    <p><strong>触发：</strong>当 AI 识别到孩子单题停留时长严重超标，会先在孩子的笔端同步轻震动提醒，同时给父母手机端推送「XX 知识点孩子可能遇到难点」的温和提醒，而非直接弹窗打扰</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>父母无需当场打断孩子，可在手机端一键通过AI生成 1 分钟语音讲解</li>
+                            <li>AI 会自动匹配到孩子卡壳的题目位置：<strong>「是否查看AI的解题思路讲解？」</strong></li>
+                            <li>确认后，AI不仅梳理了这个题目的<strong>解题思路</strong>，还列出了相关题目</strong>供孩子参考。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>非监控式盯梢，而是 AI 赋能的轻量化亲子学习协同。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗5：创作-艺术 -->
+    <div id="modal-create-1" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-create-1')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">🎨 模拟场景：地铁上的灵感</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>你在下班的地铁上，看着窗外的霓虹灯，突然脑海里浮现出一幅非常棒的赛博朋克风格画面。</p>
+                    <p><strong>触发：</strong>你没有带画板，只有一个小笔记本，而且你知道如果现在不记下来，回家就忘了。</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>你快速在笔记本上画了几根歪歪扭扭的线条：<strong>「高楼、霓虹灯、雨、全息投影广告」</strong>，并写下关键词：<strong>「赛博朋克、蓝紫色调、孤独感」</strong>。</li>
+                            <li>AI Pen 自动将这些线条和文字转化为了一段<strong>专业的Stable Diffusion/Midjourney提示词 (Prompt)</strong>。</li>
+                            <li>不仅如此，它还提供了3种不同的<strong>风格变体</strong>供你选择。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>回到家，你直接把提示词复制进AI绘画工具，完美还原了地铁上的那幅画面。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗6：创作-剧本 -->
+    <div id="modal-create-2" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal('modal-create-2')">&times;</button>
+            <div class="modal-inner">
+                <h3 class="text-3xl font-bold text-[#5c7c6e] mb-8 font-['Noto_Serif_SC']">🎨 模拟场景：卡文的编剧</h3>
+                <div class="space-y-6 text-[#4a4a4a] leading-relaxed text-lg">
+                    <p><strong>场景：</strong>你是一个新媒体内容创作者，正在写一个短视频脚本，但写到第三幕就卡文了。</p>
+                    <p><strong>触发：</strong>你不知道该怎么设计反转才能让视频更有爆点。</p>
+                    <div class="bg-white/60 p-6 rounded-2xl border border-[#d4cfc5]">
+                        <p class="font-semibold mb-4 text-[#2c2c2c]">使用 AI Pen：</p>
+                        <ul class="list-disc list-inside ml-4 space-y-3">
+                            <li>你用笔圈出了已写好的<strong>「人物设定」</strong>和<strong>「前情提要」</strong>。</li>
+                            <li>AI Pen 为你生成了3个不同的<strong>「神反转」</strong>剧情分支，每个分支都包含了<strong>镜头建议、BGM推荐、以及互动钩子设计</strong>。</li>
+                            <li>你选择了其中一个，AI直接帮你补全了完整的分镜脚本。</li>
+                        </ul>
+                    </div>
+                    <p><strong>结果：</strong>这条视频因为精彩的反转，成了小爆款。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 弹窗控制函数
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            let modal;
+            if (typeof event === 'string') {
+                modal = document.getElementById(event);
+            } else {
+                modal = event.target.closest('.modal-overlay');
+            }
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
         // 3D叠层自动轮播逻辑 (1.5秒间隔)
         document.addEventListener('DOMContentLoaded', function() {
             const card1 = document.getElementById('card-1');
@@ -407,24 +893,13 @@
             setInterval(updateCards, intervalTime);
         });
 
-        // 鼠标跟随视差效果
-        document.addEventListener('mousemove', (e) => {
-            const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-            const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-
-            const glow1 = document.querySelector('.glow-1');
-            const glow2 = document.querySelector('.glow-2');
-            if (glow1) glow1.style.transform = `translate(${mouseX * 30}px, ${mouseY * 30}px)`;
-            if (glow2) glow2.style.transform = `translate(${-mouseX * 30}px, ${-mouseY * 30}px)`;
-        });
-
         // 导航栏滚动效果
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
-                nav.style.borderBottom = '1px solid rgba(255,255,255,0.15)';
+                nav.style.borderBottom = '1px solid rgba(92, 124, 110, 0.2)';
             } else {
-                nav.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+                nav.style.borderBottom = '1px solid rgba(92, 124, 110, 0.1)';
             }
         });
     </script>
